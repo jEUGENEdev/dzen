@@ -16,13 +16,14 @@ public class SetAnimation {
         this.baseAnimation.setDuration(0);
     }
 
-    public void addAnimation(Animation anim) {
+    private void addAnim(Animation anim, PostEditable postEditable) {
         Animation.AnimationListener listener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {}
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if(postEditable != null) postEditable.edit(onObject);
                 onObject.startAnimation(anim);
             }
 
@@ -38,20 +39,12 @@ public class SetAnimation {
         animation = anim;
     }
 
+    public void addAnimation(Animation anim) {
+        addAnim(anim, null);
+    }
+
     public void addAnimation(Animation animation, PostEditable postEditable) {
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                postEditable.edit(onObject);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        addAnimation(animation);
+        addAnim(animation, postEditable);
     }
 
     public void startAnimation() {
