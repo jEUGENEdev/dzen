@@ -12,6 +12,7 @@ import com.vkontakte.dzen.category.Category;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CategoryList {
     private final List<Category> categories = new ArrayList<>();
@@ -67,13 +68,7 @@ public class CategoryList {
     }
 
     public List<Category> getPickedCategories() {
-        List<Category> categories = new ArrayList<>();
-        for(Category category : this.categories) {
-            if(category.isPick()) {
-                categories.add(category);
-            }
-        }
-        return categories;
+        return categories.stream().filter(Category::isPick).collect(Collectors.toList());
     }
 
     public static interface ChangeListener {
