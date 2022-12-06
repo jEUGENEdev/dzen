@@ -38,6 +38,22 @@ public class SetAnimation {
         animation = anim;
     }
 
+    public void addAnimation(Animation animation, PostEditable postEditable) {
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                postEditable.edit(onObject);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        addAnimation(animation);
+    }
+
     public void startAnimation() {
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
