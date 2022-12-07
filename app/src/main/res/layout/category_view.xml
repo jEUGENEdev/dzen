@@ -2,10 +2,11 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/category_back"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/category_view_style"
+    android:background="@drawable/category_view_transition_style"
     android:orientation="horizontal">
 
     <TextView

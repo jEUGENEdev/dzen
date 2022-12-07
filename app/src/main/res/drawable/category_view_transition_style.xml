@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingMode="stack">
+    <item android:drawable="@drawable/category_view_style"/>
+    <item android:drawable="@drawable/category_view_picked_style"/>
+</transition>
