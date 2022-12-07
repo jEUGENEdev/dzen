@@ -6,14 +6,12 @@ import android.view.animation.Animation;
 
 public class SetAnimation {
     private final View onObject;
-    private final Animation baseAnimation;
+    private PostEditable firstPostEditable;
+    private Animation baseAnimation;
     private Animation animation;
-    private PostEditable postEditable;
 
     public SetAnimation(View onObject) {
         this.onObject = onObject;
-        this.baseAnimation = new AlphaAnimation(onObject.getAlpha(), onObject.getAlpha());
-        this.baseAnimation.setDuration(0);
     }
 
     private void addAnim(Animation anim, PostEditable postEditable) {
@@ -31,6 +29,8 @@ public class SetAnimation {
             public void onAnimationRepeat(Animation animation) {}
         };
         if(animation == null) {
+            baseAnimation = new AlphaAnimation(onObject.getAlpha(), onObject.getAlpha());
+            baseAnimation.setDuration(0);
             baseAnimation.setAnimationListener(listener);
         }
         else {
@@ -48,23 +48,7 @@ public class SetAnimation {
     }
 
     public void startAnimation() {
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if(postEditable != null) postEditable.edit(SetAnimation.this.onObject);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
         onObject.startAnimation(baseAnimation);
-    }
-
-    public void setPostEditable(PostEditable postEditable) {
-        this.postEditable = postEditable;
     }
 
     public interface PostEditable {
