@@ -75,7 +75,7 @@ public class Category {
             else if(pickedSize == 1 && pick) {
                 // VISIBLE
                 AlphaAnimation visibleNextButtonAnimation = new AlphaAnimation(0, 1f);
-                visibleNextButtonAnimation.setDuration(7000);
+                visibleNextButtonAnimation.setDuration(700);
                 AnimationListenerBuilder visibleNextButtonBuilder = new AnimationListenerBuilder(visibleNextButtonAnimation);
                 visibleNextButtonBuilder.addPostExecutor(view -> selectionActivity.getNextButton().setVisibility(View.VISIBLE));
                 nextButtonAnimation.addAnimation(visibleNextButtonBuilder);
