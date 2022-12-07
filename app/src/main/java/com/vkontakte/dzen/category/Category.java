@@ -1,32 +1,91 @@
 package com.vkontakte.dzen.category;
 
+import android.graphics.drawable.TransitionDrawable;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.vkontakte.dzen.R;
-import com.vkontakte.dzen.utils.SetAnimation;
+import com.vkontakte.dzen.SelectionActivity;
+import com.vkontakte.dzen.di.ActivityInjection;
+import com.vkontakte.dzen.utils.animation.AnimationListenerBuilder;
+import com.vkontakte.dzen.utils.animation.SetAnimation;
 
 public class Category {
     private final int id;
     private String name;
     private boolean pick;
     private View.OnClickListener onClickListener = v -> {
-        SetAnimation animation = new SetAnimation(v);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0.4f);
-        alphaAnimation.setDuration(200);
-        animation.addAnimation(alphaAnimation);
-        alphaAnimation = new AlphaAnimation(0.4f, 1f);
-        alphaAnimation.setDuration(50);
-        animation.addAnimation(alphaAnimation);
-        animation.setPostEditable(view -> {
-            v.setBackgroundResource(pick ? R.drawable.category_view_style : R.drawable.category_view_picked_style);
-            ((ImageView) v.findViewById(R.id.category_pick_image)).setImageResource(pick ? R.drawable.plus : R.drawable.check_mark);
-            v.findViewById(R.id.category_divider).setVisibility(pick ? View.VISIBLE : View.INVISIBLE);
-            pick = !pick;
+        SelectionActivity selectionActivity = (SelectionActivity) ActivityInjection.getInstance().get(SelectionActivity.class);
+        FrameLayout divider = v.findViewById(R.id.category_divider);
+        ImageView indicator = v.findViewById(R.id.category_pick_image);
+
+        SetAnimation dividerAnimation = new SetAnimation(divider), indicatorAnimation = new SetAnimation(indicator);
+        if(pick) {
+            AlphaAnimation visibleDividerAnimation = new AlphaAnimation(0, 1f);
+            visibleDividerAnimation.setDuration(400);
+            AnimationListenerBuilder visibleDividerBuilder = new AnimationListenerBuilder(visibleDividerAnimation);
+            visibleDividerBuilder.addPostExecutor(onObject -> divider.setVisibility(View.VISIBLE));
+            dividerAnimation.addAnimation(visibleDividerBuilder);
+
+            AlphaAnimation invisibleIndicatorAnimation = new AlphaAnimation(1f, 0);
+            invisibleIndicatorAnimation.setDuration(200);
+            AlphaAnimation visibleIndicatorAnimation = new AlphaAnimation(0, 1f);
+            visibleIndicatorAnimation.setDuration(200);
+            AnimationListenerBuilder invisibleIndicatorBuilder = new AnimationListenerBuilder(invisibleIndicatorAnimation);
+            invisibleIndicatorBuilder.addPostExecutor(onObject -> indicator.setImageResource(R.drawable.plus));
+            indicatorAnimation.addAnimation(invisibleIndicatorBuilder);
+            AnimationListenerBuilder visibleIndicatorBuilder = new AnimationListenerBuilder(visibleIndicatorAnimation);
+            indicatorAnimation.addAnimation(visibleIndicatorBuilder);
+        }
+        else {
+            AlphaAnimation invisibleDividerAnimation = new AlphaAnimation(1f, 0);
+            invisibleDividerAnimation.setDuration(400);
+            AnimationListenerBuilder invisibleDividerBuilder = new AnimationListenerBuilder(invisibleDividerAnimation);
+            invisibleDividerBuilder.addPostExecutor(onObject -> divider.setVisibility(View.INVISIBLE));
+            dividerAnimation.addAnimation(invisibleDividerBuilder);
+
+            AlphaAnimation invisibleIndicatorAnimation = new AlphaAnimation(1f, 0);
+            invisibleIndicatorAnimation.setDuration(200);
+            AlphaAnimation visibleIndicatorAnimation = new AlphaAnimation(0, 1f);
+            visibleIndicatorAnimation.setDuration(200);
+            AnimationListenerBuilder invisibleIndicatorBuilder = new AnimationListenerBuilder(invisibleIndicatorAnimation);
+            invisibleIndicatorBuilder.addPostExecutor(onObject -> indicator.setImageResource(R.drawable.check_mark));
+            indicatorAnimation.addAnimation(invisibleIndicatorBuilder);
+            AnimationListenerBuilder visibleIndicatorBuilder = new AnimationListenerBuilder(visibleIndicatorAnimation);
+            indicatorAnimation.addAnimation(visibleIndicatorBuilder);
+        }
+        TransitionDrawable transitionDrawable = (TransitionDrawable) v.getBackground();
+        if(pick) transitionDrawable.reverseTransition(400); else transitionDrawable.startTransition(400);
+        dividerAnimation.startAnimation();
+
+        indicatorAnimation.getLastAnimation().addPreExecutor(onObject -> {
+            int pickedSize = selectionActivity.getCategories().getPickedCategories().size();
+            SetAnimation nextButtonAnimation = new SetAnimation(selectionActivity.getNextButton());
+            if(pickedSize == 0) {
+                // INVISIBLE
+                AlphaAnimation invisibleNextButtonAnimation = new AlphaAnimation(1f, 0);
+                invisibleNextButtonAnimation.setDuration(700);
+                AnimationListenerBuilder invisibleNextButtonBuilder = new AnimationListenerBuilder(invisibleNextButtonAnimation);
+                invisibleNextButtonBuilder.addPostExecutor(view -> selectionActivity.getNextButton().setVisibility(View.INVISIBLE));
+                nextButtonAnimation.addAnimation(invisibleNextButtonBuilder);
+                nextButtonAnimation.startAnimation();
+            }
+            else if(pickedSize == 1 && pick) {
+                // VISIBLE
+                AlphaAnimation visibleNextButtonAnimation = new AlphaAnimation(0, 1f);
+                visibleNextButtonAnimation.setDuration(7000);
+                AnimationListenerBuilder visibleNextButtonBuilder = new AnimationListenerBuilder(visibleNextButtonAnimation);
+                visibleNextButtonBuilder.addPostExecutor(view -> selectionActivity.getNextButton().setVisibility(View.VISIBLE));
+                nextButtonAnimation.addAnimation(visibleNextButtonBuilder);
+                nextButtonAnimation.startAnimation();
+            }
         });
-        animation.startAnimation();
+
+        indicatorAnimation.startAnimation();
+
+        pick = !pick;
     };
 
     public Category(int id, String name) {

@@ -71,7 +71,7 @@ public class CategoryList {
         return categories.stream().filter(Category::isPick).collect(Collectors.toList());
     }
 
-    public static interface ChangeListener {
+    public interface ChangeListener {
         void apply(Category category, View view, boolean delete);
     }
 }
