@@ -1,25 +1,13 @@
 package com.vkontakte.dzen;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.flexbox.FlexboxLayout;
-import com.vkontakte.dzen.category.Category;
 import com.vkontakte.dzen.category.list.CategoryList;
 import com.vkontakte.dzen.db.Database;
 import com.vkontakte.dzen.di.ActivityInjection;
-import com.vkontakte.dzen.utils.SetAnimation;
 
 public class SelectionActivity extends AppCompatActivity {
     private CategoryList categories;
