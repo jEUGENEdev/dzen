@@ -1,57 +1,39 @@
-package com.vkontakte.dzen.utils;
+package com.vkontakte.dzen.utils.animation;
 
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 
 public class SetAnimation {
     private final View onObject;
-    private PostEditable firstPostEditable;
-    private Animation baseAnimation;
-    private Animation animation;
+    private AnimationListenerBuilder baseAnimation;
+    private AnimationListenerBuilder animation;
 
     public SetAnimation(View onObject) {
         this.onObject = onObject;
     }
 
-    private void addAnim(Animation anim, PostEditable postEditable) {
-        Animation.AnimationListener listener = new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if(postEditable != null) postEditable.edit(onObject);
-                onObject.startAnimation(anim);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        };
-        if(animation == null) {
-            baseAnimation = new AlphaAnimation(onObject.getAlpha(), onObject.getAlpha());
-            baseAnimation.setDuration(0);
-            baseAnimation.setAnimationListener(listener);
+    private void addAnim(AnimationListenerBuilder animationListenerBuilder) {
+        if(baseAnimation == null) {
+            AlphaAnimation alphaAnimation = new AlphaAnimation(onObject.getAlpha(), onObject.getAlpha());
+            alphaAnimation.setDuration(0);
+            baseAnimation = new AnimationListenerBuilder(alphaAnimation);
+            baseAnimation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(onObject)));
+            animation = animationListenerBuilder;
+            return;
         }
-        else {
-            animation.setAnimationListener(listener);
-        }
-        animation = anim;
+        animation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(onObject)));
+        animation = animationListenerBuilder;
     }
 
-    public void addAnimation(Animation anim) {
-        addAnim(anim, null);
-    }
-
-    public void addAnimation(Animation animation, PostEditable postEditable) {
-        addAnim(animation, postEditable);
+    public void addAnimation(AnimationListenerBuilder animationListenerBuilder) {
+        addAnim(animationListenerBuilder);
     }
 
     public void startAnimation() {
-        onObject.startAnimation(baseAnimation);
+        onObject.startAnimation(baseAnimation.build(onObject));
     }
 
-    public interface PostEditable {
-        void edit(View onObject);
+    public AnimationListenerBuilder getLastAnimation() {
+        return this.animation;
     }
 }
