@@ -36,6 +36,7 @@ public class AnimationListenerBuilder {
             @Override
             public void onAnimationEnd(Animation animation) {
                 for(Consumer<View> consumer : posts) {
+                    /* view успевает поменять Visibility на VISIBLE */
                     consumer.accept(view);
                 }
             }

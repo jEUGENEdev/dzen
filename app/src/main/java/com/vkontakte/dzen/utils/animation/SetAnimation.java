@@ -1,7 +1,9 @@
 package com.vkontakte.dzen.utils.animation;
 
 import android.view.View;
-import android.view.animation.AlphaAnimation;
+import android.view.animation.RotateAnimation;
+
+import com.vkontakte.dzen.SelectionActivity;
 
 public class SetAnimation {
     private final View onObject;
@@ -14,14 +16,17 @@ public class SetAnimation {
 
     private void addAnim(AnimationListenerBuilder animationListenerBuilder) {
         if(baseAnimation == null) {
-            AlphaAnimation alphaAnimation = new AlphaAnimation(onObject.getAlpha(), onObject.getAlpha());
-            alphaAnimation.setDuration(0);
-            baseAnimation = new AnimationListenerBuilder(alphaAnimation);
-            baseAnimation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(onObject)));
+            RotateAnimation rotateAnimation = new RotateAnimation(0, 0);
+            rotateAnimation.setDuration(0);
+            baseAnimation = new AnimationListenerBuilder(rotateAnimation);
+
+            /* НАЧАЛО БАГА С АНИМАЦИЕЙ, далее в AnimationListenerBuilder.class - onAnimationEnd */
+
+            baseAnimation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(SetAnimation.this.onObject)));
             animation = animationListenerBuilder;
             return;
         }
-        animation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(onObject)));
+        animation.addPostExecutor(onObject -> onObject.startAnimation(animationListenerBuilder.build(SetAnimation.this.onObject)));
         animation = animationListenerBuilder;
     }
 
@@ -30,7 +35,7 @@ public class SetAnimation {
     }
 
     public void startAnimation() {
-        onObject.startAnimation(baseAnimation.build(onObject));
+        onObject.startAnimation(baseAnimation.build(SetAnimation.this.onObject));
     }
 
     public AnimationListenerBuilder getLastAnimation() {
